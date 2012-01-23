@@ -68,6 +68,15 @@ class WildfireVimeoFile{
 
       $ids[] = $found->primval;
       $info[] = $found;
+      //categorisation
+      foreach(explode(",", $video->tags) as $tag){
+        $model = new WildfireCategory;
+        if(($tag = trim($tag)) && $tag){
+          if($cat = $model->filter("title", $tag)->first()) $found->categories = $cat;
+          else $found->categories = $model->update_attributes(array('title'=>$tag));
+        }
+      }
+
     }
     $media = new WildfireMedia;
     foreach($ids as $id) $media->filter("id", $id, "!=");
