@@ -6,9 +6,22 @@ class WildfireVimeoFile{
   public static $name = "Vimeo";
 
   /**
-   *
+   * - check available space
+   * - get ticket
+   * - upload
    **/
   public function set($media_item){
+    $config = Config::get('vimeo');
+    $vimeo = new phpVimeo($config['consumer']['key'], $config['consumer']['secret'], $config['oauth']['key'], $config['oauth']['secret']);
+    $file = PUBLIC_DIR.$media_item->uploaded_location;
+    $size = filesize($file);
+    if(($quota = $vimeo->call("videos.upload.getQuota")) && ($quota - $size)){
+      $source = $vimeo->upload($file);
+      $vimeo->call('vimeo.videos.setTitle', array('title' => $media_item->title, 'video_id' => $source));
+      $vimeo->call('vimeo.videos.setDescription', array('description' => $media_item->content, 'video_id' => $source));
+      return $media_item->update_attributes(array('status'=>1, 'source'=>$source, 'media_class'=>get_class($this), 'media_type'=>self::$name));
+    }
+
     return false;
   }
   //should return a url to display the image
