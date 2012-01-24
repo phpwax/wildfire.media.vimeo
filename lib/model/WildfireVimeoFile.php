@@ -56,10 +56,21 @@ class WildfireVimeoFile{
     return array('1'=>array('value'=>'ALL', 'label'=>'All Videos'));
   }
 
+  public function get_videos($page=1, $pages=false){
+    $config = Config::get('vimeo');
+    $vimeo = new phpVimeo($config['consumer']['key'], $config['consumer']['secret'], $config['oauth']['key'], $config['oauth']['secret']);
+    $res = $vimeo->call('vimeo.videos.getUploaded', array('page'=>$page, 'per_page'=>50, 'full_response'=>1));
+    $user_videos = array();
+    if($res && ($videos = $res->videos->video) && count($videos)){
+      foreach($videos as $vid) $user_videos[] = $vid;
+      if(!$pages) $pages = ceil($res->videos->total / $res->videos->perpage);
+      if($pages >  $page) $user_videos = array_merge($user_videos, $this->get_videos($page+1, $pages));
+    }
+    return $user_videos;
+  }
+
   public function sync($location){
-    $url = "http://vimeo.com/api/v2/".Config::get('vimeo/username')."/videos.json";
-    $curl = new WaxBackgroundCurl(array('url'=>$url));
-    $videos = json_decode($curl->fetch());
+    $videos = $this->get_videos();
     $ids = array();
     $info = array();
     $class = get_class($this);
