@@ -11,11 +11,18 @@ class WildfireVimeoFile{
    * - upload
    **/
   public function set($media_item){
+    WaxLog::log('error', '[set]');
     $config = Config::get('vimeo');
     $vimeo = new phpVimeo($config['consumer']['key'], $config['consumer']['secret'], $config['oauth']['key'], $config['oauth']['secret']);
     $file = PUBLIC_DIR.$media_item->uploaded_location;
+    WaxLog::log('error', '[file] '.$file);
     $size = filesize($file);
-    if(($quota = $vimeo->call("videos.upload.getQuota")) && ($quota - $size)){
+    WaxLog::log('error', '[size] '.$size);
+    WaxLog::log('error', '[quota] '. var_export($vimeo->call("videos.upload.getQuota"), true));
+    $free_space = $quota->user->upload_space->free;
+
+    if(($free_space - $size) > 0){
+
       $source = $vimeo->upload($file);
       $vimeo->call('vimeo.videos.setTitle', array('title' => $media_item->title, 'video_id' => $source));
       $vimeo->call('vimeo.videos.setDescription', array('description' => $media_item->content, 'video_id' => $source));
