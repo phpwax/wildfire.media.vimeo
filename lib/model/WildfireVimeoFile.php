@@ -83,9 +83,10 @@ class WildfireVimeoFile{
     $class = get_class($this);
     foreach((array) $videos as $video){
       $model = new WildfireMedia;
+      $url = $video->urls->url[0]->_content;
       if($found = $model->filter("media_class", $class)->filter("source", $video->id)->first()) $found->update_attributes(array('status'=>1));
       else $found = $model->update_attributes(array('source'=>$video->id,
-                                                'uploaded_location'=>$video->url,
+                                                'uploaded_location'=>$url,
                                                 'status'=>1,
                                                 'media_class'=>$class,
                                                 'media_type'=>self::$name,
