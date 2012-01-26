@@ -1,4 +1,3 @@
-
 <?
 class WildfireVimeoFile{
 
@@ -11,23 +10,27 @@ class WildfireVimeoFile{
    * - upload
    **/
   public function set($media_item){
-    WaxLog::log('error', '[set]');
     $config = Config::get('vimeo');
     $vimeo = new phpVimeo($config['consumer']['key'], $config['consumer']['secret'], $config['oauth']['key'], $config['oauth']['secret']);
     $file = PUBLIC_DIR.$media_item->uploaded_location;
-    WaxLog::log('error', '[file] '.$file);
     $size = filesize($file);
-    WaxLog::log('error', '[size] '.$size);
-    WaxLog::log('error', '[quota] '. var_export($vimeo->call("videos.upload.getQuota"), true));
+    $quota = $vimeo->call("videos.upload.getQuota");
     $free_space = $quota->user->upload_space->free;
-
-    if(($free_space - $size) > 0){
-
-      $source = $vimeo->upload($file);
-      $vimeo->call('vimeo.videos.setTitle', array('title' => $media_item->title, 'video_id' => $source));
-      $vimeo->call('vimeo.videos.setDescription', array('description' => $media_item->content, 'video_id' => $source));
-      return $media_item->update_attributes(array('status'=>1, 'source'=>$source, 'media_class'=>get_class($this), 'media_type'=>self::$name));
-    }
+    if(($free_space - $size) > 0 && ($source = $vimeo->upload($file)) ){
+      WaxLog::log('error', '[uploaded] '.$source);
+      $res = $media_item->update_attributes(array(
+                                                'status'=>1,
+                                                'source'=>$source,
+                                                'media_class'=>get_class($this),
+                                                'media_type'=>self::$name,
+                                                'uploaded_location'=>'http://vimeo.com/'.$source,
+                                                'hash'=>md5($source),
+                                                'file_type'=>'video',
+                                                'sync_location'=>'ALL'
+                                                ));
+      if($res) unlink($file);
+      return $res;
+    }else WaxLog::log('error', '[no space]');
 
     return false;
   }
