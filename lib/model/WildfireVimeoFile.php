@@ -17,7 +17,7 @@ class WildfireVimeoFile{
     $quota = $vimeo->call("videos.upload.getQuota");
     $free_space = $quota->user->upload_space->free;
     if(($free_space - $size) > 0 && ($source = $vimeo->upload($file)) ){
-      WaxLog::log('error', '[uploaded] '.$source);
+      WaxLog::log('error', '[uploaded] '.$source, 'vimeo');
       $res = $media_item->update_attributes(array(
                                                 'status'=>1,
                                                 'source'=>$source,
@@ -30,7 +30,7 @@ class WildfireVimeoFile{
                                                 ));
       if($res) unlink($file);
       return $res;
-    }else WaxLog::log('error', '[no space]');
+    }else WaxLog::log('error', '[no space]', 'vimeo');
 
     return false;
   }
