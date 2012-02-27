@@ -1,4 +1,5 @@
 <?
+CMSApplication::register_module("media.vimeo", array("hidden"=>true, "plugin_name"=>"wildfire.media.vimeo", 'assets_for_cms'=>true));
 WildfireMedia::$classes[] = 'WildfireVimeoFile';
 WildfireMedia::$allowed['mp4'] = 'WildfireVimeoFile';
 WildfireMedia::$allowed['asf'] = 'WildfireVimeoFile';
