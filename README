@@ -5,14 +5,12 @@ SETUP:
 * Move the included vimeo.tmp file to your public directory and rename to vimeo.php
 * Create an application on the account (with write access)
   * Set the application address to be local versions (http://site.dev/vimeo.php etc)
-  * Swap out 'CONSUMER KEY' & 'CONSUMER SECRET' with app keys
+  * Swap out 'CONSUMER KEY' & 'CONSUMER SECRET' with app keys and config/vimeo/consumer/key + config/vimeo/consumer/secret
 * In the browser, go to http://site.dev/vimeo.php
 * Click the authorise link
 * Approve the app
 * The page you are returned to will contain a list of the videos uploaded to the account
   and at the bottom a print_r of $_SESSION
-* oauth_request_token is config/vimeo/consumer/key (its the same as 'CONSUMER KEY')
-* oauth_request_token_secret is config/vimeo/consumer/secret (its the same as 'CONSUMER SECRET')
 * oauth_access_token is config/vimeo/oauth/key
 * oauth_access_token_secret is config/vimeo/oauth/secret
 
