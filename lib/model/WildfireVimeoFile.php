@@ -53,7 +53,7 @@ class WildfireVimeoFile{
     header("Location: ".$data['source']);
   }
   //generates the tag to be displayed - return generic icon if not an image
-  public function render($media_item, $size, $title="preview"){
+  public function render($media_item, $size, $title="preview", $class=""){
     if($data = $this->get($media_item, $size, true)) return $data->html;
     else return "";
   }
