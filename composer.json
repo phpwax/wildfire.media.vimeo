@@ -1,0 +1,21 @@
+{
+    "name": "phpwax/wildfire.media.vimeo",
+    "description": "import vimeo vids into wildfire",
+    "authors": [
+        {
+            "name": "Charles Marshall",
+            "email": "charles@oneblackbear.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+      "phpwax/phpwax": "3.2.*"
+    },
+    "license": "MIT",
+    "autoload": {
+      "classmap": [
+        "lib/", "resources/"
+      ],
+      "files": ["ini.php"]
+    }
+}
